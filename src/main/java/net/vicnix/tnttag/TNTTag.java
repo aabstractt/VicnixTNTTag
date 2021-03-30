@@ -26,6 +26,8 @@ public class TNTTag extends JavaPlugin {
 
             this.getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
             this.getServer().getPluginManager().registerEvents(new PlayerQuitListener(), this);
+
+            this.getServer().getScheduler().runTaskTimer(this, () -> GameArena.getInstance().tickGame(), 0, 20);
         } catch (ArenaException e) {
             this.getLogger().warning(e.getMessage());
         }

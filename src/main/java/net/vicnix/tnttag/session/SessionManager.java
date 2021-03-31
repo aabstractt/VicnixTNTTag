@@ -29,6 +29,10 @@ public class SessionManager {
         return instance;
     }
 
+    public Map<UUID, Session> getSessions() {
+        return this.sessionMap;
+    }
+
     public void createSession(Player player) {
         if (this.sessionMap.containsKey(player.getUniqueId())) return;
 
@@ -88,9 +92,9 @@ public class SessionManager {
         this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         this.objective.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&a&lTNT TAG"));
 
-        this.objective.getScore(ChatColor.GRAY + "Ronda #1").setScore(14);
+        this.objective.getScore(ChatColor.GRAY + "Ronda #" + GameArena.getInstance().getCurrentRound()).setScore(14);
         this.objective.getScore("   ").setScore(13);
-        this.objective.getScore(ChatColor.YELLOW + "Explosion en: " + ChatColor.YELLOW + "10s").setScore(12);
+        this.objective.getScore(ChatColor.YELLOW + "Explosión en: " + ChatColor.YELLOW + GameArena.getInstance().getTntCountdown() + "s").setScore(12);
         // TODO: Score #11 set when the scoreboard is send to the player
         this.objective.getScore("  ").setScore(10);
         this.objective.getScore(ChatColor.WHITE + String.format("Vivos: %s", this.getSessionsAlive().size())).setScore(9);
@@ -122,5 +126,15 @@ public class SessionManager {
         }
 
         return sessions;
+    }
+
+    public Session getWinner() {
+        List<Session> sessions = this.getSessionsAlive();
+
+        if (sessions.size() > 1) {
+            return null;
+        }
+
+        return sessions.get(0);
     }
 }

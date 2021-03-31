@@ -36,6 +36,6 @@ public class EntityDamageListener implements Listener {
         session.convertToTnt();
 
         target.sendMessage(ChatColor.YELLOW + "Le has pasado la tnt a " + session.getName());
-        session.sendMessage(ChatColor.RED + "Has sido tageado por " + target.getName());
+        session.sendMessage(ChatColor.RED + "Has sido golpeado por " + target.getName());
     }
 }

@@ -20,8 +20,6 @@ public class TNTTagCommand implements CommandExecutor {
 
     private final Map<String, SubCommand> commands = new HashMap<>();
 
-    private final Map<String, String> commandsAlias = new HashMap<>();
-
     public TNTTagCommand() {
         this.registerSubCommand(new LobbySpawnSubCommand());
         this.registerSubCommand(new WorldSpawnSubCommand());
@@ -102,10 +100,12 @@ public class TNTTagCommand implements CommandExecutor {
 
             if (annotations == null) continue;
 
+            if (!player.hasPermission("tnttag.command." + annotations.name()) && annotations.requiresPermission()) continue;
+
             TextComponent pt1 = new TextComponent(annotations.syntax());
             pt1.setColor(ChatColor.YELLOW);
             pt1.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[]{prepareMSG}));
-            pt1.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/amigos " + annotations.name() + " "));
+            pt1.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/tnttag " + annotations.name() + " "));
 
             TextComponent pt2 = new TextComponent(" - ");
             pt2.setColor(ChatColor.DARK_GRAY);
@@ -121,26 +121,14 @@ public class TNTTagCommand implements CommandExecutor {
     }
 
     private void registerSubCommand(SubCommand subCommand) {
-        registerSubCommand(subCommand, null);
-    }
-
-    private void registerSubCommand(SubCommand subCommand, String name) {
         SubCommandAnnotation annotation = subCommand.getAnnotations();
 
         if (annotation == null) return;
 
-        if (name == null) {
-            commands.put(annotation.name(), subCommand);
-        } else {
-            commandsAlias.put(name, annotation.name());
-        }
+        commands.put(annotation.name(), subCommand);
     }
 
     private SubCommand getCommand(String name) {
-        String alias = this.commandsAlias.get(name.toLowerCase());
-
-        if (alias != null) name = alias;
-
         return commands.get(name.toLowerCase());
     }
 }

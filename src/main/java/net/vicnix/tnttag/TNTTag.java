@@ -24,8 +24,6 @@ public class TNTTag extends JavaPlugin {
 
         try {
             GameArena.getInstance().init();
-
-            this.getServer().getScheduler().runTaskTimer(this, () -> GameArena.getInstance().tickGame(), 0, 20);
         } catch (ArenaException e) {
             this.getLogger().warning(e.getMessage());
         }

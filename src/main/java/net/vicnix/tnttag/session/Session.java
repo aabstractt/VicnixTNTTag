@@ -93,7 +93,7 @@ public class Session {
 
         instance.setPlayerListName(ChatColor.RED + instance.getName());
 
-        instance.sendMessage(ChatColor.RED + "¡Ahora eres la tnt! ¡Etiqueta a alguien antes de que se acabe el tiempo!");
+        instance.sendMessage(ChatColor.RED + "¡Ahora eres la tnt! ¡Golpea a alguien antes de que se acabe el tiempo!");
 
         instance.playSound(instance.getLocation(), Sound.FIREWORK_LAUNCH, 1, 1);
 

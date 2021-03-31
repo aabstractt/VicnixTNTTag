@@ -3,6 +3,7 @@ package net.vicnix.tnttag.command;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.*;
 import net.vicnix.tnttag.command.subcommand.ArenaNameSubCommand;
+import net.vicnix.tnttag.command.subcommand.LoadSubCommand;
 import net.vicnix.tnttag.command.subcommand.LobbySpawnSubCommand;
 import net.vicnix.tnttag.command.subcommand.WorldSpawnSubCommand;
 import net.vicnix.tnttag.session.Session;
@@ -24,6 +25,7 @@ public class TNTTagCommand implements CommandExecutor {
         this.registerSubCommand(new LobbySpawnSubCommand());
         this.registerSubCommand(new WorldSpawnSubCommand());
         this.registerSubCommand(new ArenaNameSubCommand());
+        this.registerSubCommand(new LoadSubCommand());
     }
 
     @Override

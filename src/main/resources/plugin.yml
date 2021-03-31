@@ -1,0 +1,8 @@
+name: VicnixTNTTag
+author: iTheTrollIdk
+version: 1.0
+main: net.vicnix.tnttag.TNTTag
+
+commands:
+  tnttag:
+    description: "Vicnix TNT Tag plugin"

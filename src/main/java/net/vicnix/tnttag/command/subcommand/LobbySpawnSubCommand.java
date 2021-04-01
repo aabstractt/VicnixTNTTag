@@ -17,7 +17,7 @@ public class LobbySpawnSubCommand extends SubCommand {
 
     @Override
     public void execute(Session session, String[] args) {
-        Location loc = session.getInstance().getLocation();
+        Location loc = session.getSessionStorage().getInstance().getLocation();
 
         TNTTag.getInstance().getConfig().set("lobbySpawn", loc);
         TNTTag.getInstance().saveConfig();

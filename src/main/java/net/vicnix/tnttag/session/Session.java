@@ -8,32 +8,17 @@ import java.util.UUID;
 
 public class Session {
 
-    private final String name;
-    private final UUID uuid;
+    private final SessionStorage sessionStorage;
 
     private Boolean spectator = false;
     private Boolean tnt = false;
 
-    public Session(String name, UUID uuid) {
-        this.name = name;
-
-        this.uuid = uuid;
+    public Session(SessionStorage sessionStorage) {
+        this.sessionStorage = sessionStorage;
     }
 
-    public String getName() {
-        return this.name;
-    }
-
-    public UUID getUniqueId() {
-        return this.uuid;
-    }
-
-    public Player getInstance() {
-        return Bukkit.getServer().getPlayer(this.getUniqueId());
-    }
-
-    public Boolean isConnected() {
-        return this.getInstance() != null;
+    public SessionStorage getSessionStorage() {
+        return this.sessionStorage;
     }
 
     public Boolean isSpectator() {
@@ -49,15 +34,13 @@ public class Session {
     }
 
     public void sendMessage(String message) {
-        if (!this.isConnected()) return;
-
-        this.getInstance().sendMessage(message);
+        this.getSessionStorage().sendMessage(message);
     }
 
     public void convertToDefault() {
         this.tnt = false;
 
-        Player instance = this.getInstance();
+        Player instance = this.getSessionStorage().getInstance();
 
         instance.getInventory().clear();
 
@@ -65,7 +48,7 @@ public class Session {
     }
 
     public void convertToSpectator() {
-        Player instance = this.getInstance();
+        Player instance = this.getSessionStorage().getInstance();
 
         instance.getInventory().clear();
 
@@ -81,7 +64,7 @@ public class Session {
     }
 
     public void convertToTnt() {
-        Player instance = this.getInstance();
+        Player instance = this.getSessionStorage().getInstance();
 
         instance.setWalkSpeed(.5f);
 

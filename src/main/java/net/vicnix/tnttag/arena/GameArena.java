@@ -164,13 +164,13 @@ public class GameArena {
 
                 session.convertToSpectator();
 
-                SessionManager.getInstance().broadcastMessage(ChatColor.RED + session.getName() + ChatColor.YELLOW + " ha explotado!");
+                SessionManager.getInstance().broadcastMessage(ChatColor.RED + session.getSessionStorage().getName() + ChatColor.YELLOW + " ha explotado!");
             }
 
             if (SessionManager.getInstance().getSessionsAlive().size() == 0) {
                 this.setStatus(GameStatus.RESTARTING);
 
-                SessionManager.getInstance().broadcastMessage(ChatColor.LIGHT_PURPLE + SessionManager.getInstance().getWinner().getName() + ChatColor.GREEN + " ha ganado el juego!");
+                SessionManager.getInstance().broadcastMessage(ChatColor.LIGHT_PURPLE + SessionManager.getInstance().getWinner().getSessionStorage().getName() + ChatColor.GREEN + " ha ganado el juego!");
 
                 return;
             }

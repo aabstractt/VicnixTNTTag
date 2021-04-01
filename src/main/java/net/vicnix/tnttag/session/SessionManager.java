@@ -3,6 +3,7 @@ package net.vicnix.tnttag.session;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.vicnix.tnttag.arena.GameArena;
 import net.vicnix.tnttag.arena.GameStatus;
+import net.vicnix.tnttag.provider.MongoDBProvider;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -36,7 +37,7 @@ public class SessionManager {
     public void createSession(Player player) {
         if (this.sessionMap.containsKey(player.getUniqueId())) return;
 
-        Session session = new Session(player.getName(), player.getUniqueId());
+        Session session = new Session(MongoDBProvider.getInstance().loadSessionStorage(player.getUniqueId()));
 
         this.sessionMap.put(player.getUniqueId(), session);
 
@@ -101,11 +102,13 @@ public class SessionManager {
         this.objective.getScore("").setScore(8);
         this.objective.getScore(ChatColor.GREEN + "mc.vicnix.net").setScore(7);
 
-        Bukkit.getOnlinePlayers().forEach(p -> {
-            this.objective.getScore("Objetivo: " + ChatColor.GREEN + p.getName()).setScore(11);
+        for (Session session : this.sessionMap.values()) {
+            if (!session.isSpectator()) {
+                this.objective.getScore("Objetivo: " + (session.isTnt() ? ChatColor.RED + "¡Golpea a alguien!" : ChatColor.GREEN + "¡Huye!")).setScore(11);
+            }
 
-            p.setScoreboard(this.scoreboard);
-        });
+            session.getSessionStorage().getInstance().setScoreboard(this.scoreboard);
+        }
     }
 
     public void broadcastMessage(String message) {
@@ -131,7 +134,7 @@ public class SessionManager {
     public Session getWinner() {
         List<Session> sessions = this.getSessionsAlive();
 
-        if (sessions.size() > 1) {
+        if (sessions.size() != 1) {
             return null;
         }
 

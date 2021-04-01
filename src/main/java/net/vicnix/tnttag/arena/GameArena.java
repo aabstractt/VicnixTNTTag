@@ -1,6 +1,7 @@
 package net.vicnix.tnttag.arena;
 
 import net.vicnix.tnttag.TNTTag;
+import net.vicnix.tnttag.provider.RedisServer;
 import net.vicnix.tnttag.session.Session;
 import net.vicnix.tnttag.session.SessionManager;
 import org.bukkit.Bukkit;
@@ -24,21 +25,23 @@ public class GameArena {
 
     private int currentRound = 1;
 
-    private int lobbyCountdown = 60;
+    private int lobbyCountdown = 20;
     private int tntCountdown = 60;
 
     public static GameArena getInstance() {
         return instance;
     }
 
-    public void init() throws ArenaException {
+    public void init() {
         FileConfiguration configuration = TNTTag.getInstance().getConfig();
 
         if (!configuration.contains("arenaName") ||
             !configuration.contains("lobbySpawn") ||
             !configuration.contains("worldSpawn")
         ) {
-            throw new ArenaException("Arena data not found");
+            TNTTag.getInstance().getLogger().warning("Arena data not found");
+
+            return;
         }
 
         this.arenaName = configuration.getString("arenaName");
@@ -49,6 +52,8 @@ public class GameArena {
         Bukkit.getScheduler().runTaskTimer(TNTTag.getInstance(), () -> GameArena.getInstance().tickGame(), 0, 20);
 
         TNTTag.getInstance().getLogger().info("Arena loaded... Waiting for players");
+
+        RedisServer.getInstance().startServer();
     }
 
     public void findPlayers() {
@@ -71,6 +76,8 @@ public class GameArena {
 
             taggers++;
         }
+
+        sessionsAlive.forEach(Session::convertToTnt);
     }
 
     public String getArenaName() {
@@ -178,5 +185,9 @@ public class GameArena {
         }
 
         this.tntCountdown--;
+    }
+
+    public Boolean wasLoaded() {
+        return this.arenaName != null && this.lobbySpawn != null && this.worldSpawn != null;
     }
 }

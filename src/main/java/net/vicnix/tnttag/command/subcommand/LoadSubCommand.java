@@ -1,10 +1,10 @@
 package net.vicnix.tnttag.command.subcommand;
 
-import net.vicnix.tnttag.arena.ArenaException;
 import net.vicnix.tnttag.arena.GameArena;
 import net.vicnix.tnttag.command.SubCommand;
 import net.vicnix.tnttag.command.SubCommandAnnotation;
 import net.vicnix.tnttag.session.Session;
+import org.bukkit.ChatColor;
 
 @SubCommandAnnotation(
         name = "load",
@@ -16,10 +16,8 @@ public class LoadSubCommand extends SubCommand {
 
     @Override
     public void execute(Session session, String[] args) {
-        try {
-            GameArena.getInstance().init();
-        } catch (ArenaException e) {
-            e.printStackTrace();
-        }
+        GameArena.getInstance().init();
+
+        session.sendMessage(ChatColor.BLUE + "Arena cargada!");
     }
 }

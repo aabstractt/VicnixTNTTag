@@ -1,10 +1,6 @@
 package net.vicnix.tnttag.session;
 
-import net.md_5.bungee.api.chat.BaseComponent;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -58,12 +54,6 @@ public class Session {
         this.getInstance().sendMessage(message);
     }
 
-    public void sendMessage(BaseComponent... baseComponents) {
-        if (!this.isConnected()) return;
-
-        this.getInstance().spigot().sendMessage(baseComponents);
-    }
-
     public void convertToDefault() {
         this.tnt = false;
 
@@ -75,6 +65,16 @@ public class Session {
     }
 
     public void convertToSpectator() {
+        Player instance = this.getInstance();
+
+        instance.getInventory().clear();
+
+        instance.setPlayerListName(ChatColor.GREEN + instance.getName());
+
+        instance.setGameMode(GameMode.SPECTATOR);
+
+        instance.getWorld().createExplosion(instance.getLocation(), 1, false);
+
         this.spectator = true;
 
         this.tnt = false;

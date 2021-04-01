@@ -20,6 +20,6 @@ public class ArenaNameSubCommand extends SubCommand {
         TNTTag.getInstance().getConfig().set("arenaName", args[0]);
         TNTTag.getInstance().saveConfig();
 
-        session.sendMessage(ChatColor.GREEN + "Ahora el nombre de la arena es " + args[0]);
+        session.sendMessage(ChatColor.LIGHT_PURPLE + "Ahora el nombre de la arena es " + args[0]);
     }
 }

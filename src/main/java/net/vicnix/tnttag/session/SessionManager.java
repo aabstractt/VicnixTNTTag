@@ -51,6 +51,8 @@ public class SessionManager {
 
         player.getInventory().clear();
 
+        player.setPlayerListName(ChatColor.GRAY + player.getName());
+
         if (GameArena.getInstance().getStatus() == GameStatus.IN_GAME) {
             session.convertToSpectator();
         }

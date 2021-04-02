@@ -47,6 +47,7 @@ public class Session {
         instance.setPlayerListName(ChatColor.GREEN + instance.getName());
     }
 
+    @SuppressWarnings("unchecked")
     public void convertToSpectator() {
         Player instance = this.getSessionStorage().getInstance();
 
@@ -60,7 +61,7 @@ public class Session {
 
         this.hideFromAll();
 
-        this.spawnTo((List<Session>) SessionManager.getInstance().getSessions().values().stream().filter(session -> session.isSpectator()));
+        this.spawnTo((List<Session>) SessionManager.getInstance().getSessions().values().stream().filter(Session::isSpectator));
 
         this.spectator = true;
 
@@ -88,18 +89,10 @@ public class Session {
     }
 
     public void hideFromAll() {
-        Player instance = this.sessionStorage.getInstance();
-
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            player.hidePlayer(instance);
-        }
+        Bukkit.getOnlinePlayers().forEach(player -> player.hidePlayer(this.sessionStorage.getInstance()));
     }
 
     public void spawnTo(List<Session> sessions) {
-        Player instance = this.sessionStorage.getInstance();
-
-        for (Session session : sessions) {
-            session.getSessionStorage().getInstance().showPlayer(instance);
-        }
+        sessions.forEach(session -> session.getSessionStorage().getInstance().showPlayer(this.sessionStorage.getInstance()));
     }
 }

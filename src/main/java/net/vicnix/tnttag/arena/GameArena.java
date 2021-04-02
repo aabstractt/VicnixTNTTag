@@ -76,8 +76,6 @@ public class GameArena {
 
             System.out.println(sessionsAlive.size() + " DIVIDE: " + this.getTntCounts() + ", TAGGERS: "  + taggers);
         }
-
-        sessionsAlive.forEach(Session::convertToTnt);
     }
 
     public String getArenaName() {

@@ -1,11 +1,13 @@
 package net.vicnix.tnttag.session;
 
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.vicnix.tnttag.TNTTag;
 import net.vicnix.tnttag.arena.GameArena;
 import net.vicnix.tnttag.arena.GameStatus;
 import net.vicnix.tnttag.provider.MongoDBProvider;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
@@ -37,13 +39,17 @@ public class SessionManager {
     public void createSession(Player player) {
         if (this.sessionMap.containsKey(player.getUniqueId())) return;
 
-        Session session = new Session(MongoDBProvider.getInstance().loadSessionStorage(player.getUniqueId()));
+        Session session = new Session(MongoDBProvider.getInstance().loadSessionStorage(player.getName(), player.getUniqueId()));
 
         this.sessionMap.put(player.getUniqueId(), session);
 
         if (GameArena.getInstance().getLobbySpawn() == null) return;
 
         player.teleport(GameArena.getInstance().getLobbySpawn());
+
+        player.setGameMode(GameMode.SURVIVAL);
+
+        player.getInventory().clear();
 
         if (GameArena.getInstance().getStatus() == GameStatus.IN_GAME) {
             session.convertToSpectator();
@@ -53,7 +59,9 @@ public class SessionManager {
     public void closeSession(Player player) {
         if (!this.sessionMap.containsKey(player.getUniqueId())) return;
 
-        this.sessionMap.remove(player.getUniqueId());
+        Session session = this.sessionMap.remove(player.getUniqueId());
+
+        Bukkit.getScheduler().runTaskAsynchronously(TNTTag.getInstance(), () -> MongoDBProvider.getInstance().saveSessionStorage(session.getSessionStorage()));
     }
 
     public Session getSessionPlayer(Player player) {
@@ -76,7 +84,7 @@ public class SessionManager {
 
         this.objective.getScore("  ").setScore(13);
         this.objective.getScore(ChatColor.WHITE + "Mapa: " + ChatColor.LIGHT_PURPLE + arenaName).setScore(12);
-        this.objective.getScore(ChatColor.WHITE + "Jugadores: " + ChatColor.LIGHT_PURPLE + this.sessionMap.size() + "/28").setScore(11);
+        this.objective.getScore(ChatColor.WHITE + "Jugadores: " + ChatColor.LIGHT_PURPLE + this.getSessionsPlaying().size() + "/28").setScore(11);
         this.objective.getScore(" ").setScore(10);
         this.objective.getScore(ChatColor.WHITE + (starting ? "Empezando en: " + ChatColor.GREEN + GameArena.getInstance().getLobbyCountdown() + "s" : "Esperando")).setScore(9);
         this.objective.getScore("").setScore(8);
@@ -119,11 +127,11 @@ public class SessionManager {
         Bukkit.getOnlinePlayers().forEach(p -> p.spigot().sendMessage(baseComponents));
     }
 
-    public List<Session> getSessionsAlive() {
+    public List<Session> getSessionsPlaying() {
         List<Session> sessions = new ArrayList<>();
 
         for (Session session : this.sessionMap.values()) {
-            if (!session.isAlive()) continue;
+            if (session.isSpectator()) continue;
 
             sessions.add(session);
         }
@@ -131,8 +139,20 @@ public class SessionManager {
         return sessions;
     }
 
+    public List<Session> getSessionsAlive() {
+        List<Session> sessions = new ArrayList<>();
+
+        this.getSessionsPlaying().forEach(session -> {
+            if (!session.isTnt()) {
+                sessions.add(session);
+            }
+        });
+
+        return sessions;
+    }
+
     public Session getWinner() {
-        List<Session> sessions = this.getSessionsAlive();
+        List<Session> sessions = this.getSessionsPlaying();
 
         if (sessions.size() != 1) {
             return null;

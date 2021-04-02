@@ -4,7 +4,7 @@ import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.UUID;
+import java.util.List;
 
 public class Session {
 
@@ -58,6 +58,10 @@ public class Session {
 
         instance.getWorld().createExplosion(instance.getLocation(), 1, false);
 
+        this.hideFromAll();
+
+        this.spawnTo((List<Session>) SessionManager.getInstance().getSessions().values().stream().filter(session -> session.isSpectator()));
+
         this.spectator = true;
 
         this.tnt = false;
@@ -81,5 +85,21 @@ public class Session {
         instance.playSound(instance.getLocation(), Sound.FIREWORK_LAUNCH, 1, 1);
 
         this.tnt = true;
+    }
+
+    public void hideFromAll() {
+        Player instance = this.sessionStorage.getInstance();
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            player.hidePlayer(instance);
+        }
+    }
+
+    public void spawnTo(List<Session> sessions) {
+        Player instance = this.sessionStorage.getInstance();
+
+        for (Session session : sessions) {
+            session.getSessionStorage().getInstance().showPlayer(instance);
+        }
     }
 }

@@ -60,6 +60,8 @@ public class SessionStorage {
 
     public void increaseWins() {
         this.wins++;
+
+        this.updateCurrentWinStreak();
     }
 
     public void updateCurrentWinStreak() {

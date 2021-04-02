@@ -59,11 +59,9 @@ public class GameArena {
     public void findPlayers() {
         List<Session> sessionsAlive = SessionManager.getInstance().getSessionsAlive();
 
-        int taggers = 1;
+        int taggers = 0;
 
-        while (taggers <= (sessionsAlive.size() / 2)) {
-            System.out.println(sessionsAlive.size() + " DIVIDE: " + sessionsAlive.size() / 2 + ", TAGGERS: "  + taggers);
-
+        while (taggers < this.getTntCounts()) {
             Random random = new Random();
 
             int index = random.nextInt(sessionsAlive.size());
@@ -75,6 +73,8 @@ public class GameArena {
             session.convertToTnt();
 
             taggers++;
+
+            System.out.println(sessionsAlive.size() + " DIVIDE: " + this.getTntCounts() + ", TAGGERS: "  + taggers);
         }
 
         sessionsAlive.forEach(Session::convertToTnt);
@@ -127,7 +127,7 @@ public class GameArena {
     }
 
     private void tickWaiting() {
-        Boolean starting = SessionManager.getInstance().getSessionsAlive().size() >= TNTTag.getInstance().getMinPlayers();
+        Boolean starting = SessionManager.getInstance().getSessionsPlaying().size() >= TNTTag.getInstance().getMinPlayers();
 
         SessionManager.getInstance().sendLobbyScoreboard(starting);
 
@@ -153,26 +153,20 @@ public class GameArena {
         Bukkit.getOnlinePlayers().forEach(p -> p.teleport(this.getWorldSpawn()));
 
         this.findPlayers();
+
+        SessionManager.getInstance().getSessionsPlaying().forEach(session -> session.getSessionStorage().increaseGamesPlayed());
     }
 
     private void tickIngame() {
         SessionManager.getInstance().sendGameScoreboard();
 
         if (this.tntCountdown == 0) {
-            for (Session session : SessionManager.getInstance().getSessions().values()) {
+            for (Session session : SessionManager.getInstance().getSessionsPlaying()) {
                 if (!session.isTnt()) continue;
 
                 session.convertToSpectator();
 
                 SessionManager.getInstance().broadcastMessage(ChatColor.RED + session.getSessionStorage().getName() + ChatColor.YELLOW + " ha explotado!");
-            }
-
-            if (SessionManager.getInstance().getSessionsAlive().size() == 0) {
-                this.setStatus(GameStatus.RESTARTING);
-
-                SessionManager.getInstance().broadcastMessage(ChatColor.LIGHT_PURPLE + SessionManager.getInstance().getWinner().getSessionStorage().getName() + ChatColor.GREEN + " ha ganado el juego!");
-
-                return;
             }
 
             this.findPlayers();
@@ -184,7 +178,43 @@ public class GameArena {
             return;
         }
 
+        Session winner = SessionManager.getInstance().getWinner();
+
+        if (winner == null && SessionManager.getInstance().getSessionsPlaying().size() <= 0) {
+            SessionManager.getInstance().broadcastMessage("Ningun sobreviviente encontrado");
+
+            this.setStatus(GameStatus.RESTARTING);
+
+            return;
+        } else if (winner != null) {
+            winner.getSessionStorage().increaseWins();
+
+            SessionManager.getInstance().broadcastMessage(ChatColor.LIGHT_PURPLE + winner.getSessionStorage().getName() + ChatColor.GREEN + " ha ganado el juego!");
+
+            this.setStatus(GameStatus.RESTARTING);
+
+            return;
+        }
+
         this.tntCountdown--;
+    }
+
+    public Integer getTntCounts() {
+        int sessionsPlaying = SessionManager.getInstance().getSessionsPlaying().size();
+
+        if (sessionsPlaying == 30) {
+            return 6;
+        } else if (sessionsPlaying > 24) {
+            return 5;
+        } else if (sessionsPlaying > 19) {
+            return 4;
+        } else if (sessionsPlaying > 15) {
+            return 3;
+        } else if (sessionsPlaying > 13) {
+            return 2;
+        }
+
+        return 1;
     }
 
     public Boolean wasLoaded() {

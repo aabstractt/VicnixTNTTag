@@ -143,4 +143,10 @@ public class ArenaFactory {
 
         arena.forceRemove(player);
     }
+
+    public void removeArena(GameArena arena) {
+        if (arena.getTask() != null) arena.getTask().cancel();
+
+        this.arenas.remove(arena.getId());
+    }
 }

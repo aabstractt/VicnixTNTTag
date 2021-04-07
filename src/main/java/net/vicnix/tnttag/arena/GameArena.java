@@ -7,7 +7,9 @@ import net.vicnix.tnttag.session.Session;
 import net.vicnix.tnttag.session.SessionStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.craftbukkit.v1_8_R3.scheduler.CraftTask;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
@@ -20,6 +22,7 @@ public class GameArena {
     private final GameLevel level;
     private final Scoreboard scoreboard;
     private Objective objective;
+    private final BukkitTask task;
 
     private final Map<UUID, Session> sessions = new HashMap<>();
     private final Map<UUID, Session> spectators = new HashMap<>();
@@ -38,7 +41,7 @@ public class GameArena {
 
         this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
 
-        Bukkit.getScheduler().runTaskTimer(TNTTag.getInstance(), this::tickGame, 0, 20);
+        this.task = Bukkit.getScheduler().runTaskTimer(TNTTag.getInstance(), this::tickGame, 0, 20);
     }
 
     public Integer getId() {
@@ -51,6 +54,10 @@ public class GameArena {
 
     public String getWorldName() {
         return "Match-" + this.id;
+    }
+
+    public BukkitTask getTask() {
+        return this.task;
     }
 
     public void findPlayers() {

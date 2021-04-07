@@ -38,9 +38,6 @@ public class EntityDamageListener implements Listener {
 
         if (!(ev instanceof EntityDamageByEntityEvent)) return;
 
-
-        ev.setDamage(0);
-
         if (!(((EntityDamageByEntityEvent) ev).getDamager() instanceof Player)) return;
 
         Session target = ArenaFactory.getInstance().getSessionPlayer((Player) ((EntityDamageByEntityEvent) ev).getDamager());

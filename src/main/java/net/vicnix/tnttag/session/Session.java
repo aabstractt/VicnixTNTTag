@@ -12,7 +12,6 @@ public class Session {
     private final SessionStorage sessionStorage;
     private final GameArena arena;
 
-    private Boolean spectator = false;
     private Boolean tnt = false;
 
     public Session(SessionStorage sessionStorage, GameArena arena) {
@@ -30,7 +29,7 @@ public class Session {
     }
 
     public Boolean isSpectator() {
-        return this.spectator;
+        return this.arena.inArenaAsSpectator(this.sessionStorage.getInstance());
     }
 
     public Boolean isTnt() {
@@ -51,7 +50,6 @@ public class Session {
         instance.setPlayerListName(ChatColor.GREEN + instance.getName());
     }
 
-    @SuppressWarnings("unchecked")
     public void convertToSpectator() {
         Player instance = this.getSessionStorage().getInstance();
 
@@ -59,7 +57,7 @@ public class Session {
 
         instance.getInventory().clear();
 
-        instance.setPlayerListName(ChatColor.GREEN + instance.getName());
+        instance.setPlayerListName(ChatColor.GRAY + instance.getName());
 
         instance.setGameMode(GameMode.SPECTATOR);
 
@@ -67,9 +65,10 @@ public class Session {
 
         this.hideFromAll();
 
-        this.spawnTo((List<Session>) this.arena.getSessions().values().stream().filter(Session::isSpectator));
+        this.spawnTo((List<Session>) this.arena.getSpectators().values());
 
-        this.spectator = true;
+        this.arena.addSpectator(this);
+        this.arena.removeSession(this.sessionStorage.getInstance());
 
         this.tnt = false;
     }

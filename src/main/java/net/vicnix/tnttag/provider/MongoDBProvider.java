@@ -27,7 +27,13 @@ public class MongoDBProvider {
         try {
             FileConfiguration config = TNTTag.getInstance().getConfig();
 
-            MongoClient mongoClient = new MongoClient(new MongoClientURI(config.getString("mongouri")));
+            MongoClient mongoClient;
+
+            if (config.getString("mongouri").equals("")) {
+                mongoClient = new MongoClient();
+            } else {
+                mongoClient = new MongoClient(new MongoClientURI(config.getString("mongouri")));
+            }
 
             MongoDatabase database = mongoClient.getDatabase("TNTTag");
 
@@ -91,7 +97,7 @@ public class MongoDBProvider {
         Document document = this.collection.find(Filters.eq("uuid", uuid.toString())).first();
 
         if (document == null || document.isEmpty()) {
-            return new SessionStorage(name, uuid);
+            return null;
         }
 
         if (name == null) {

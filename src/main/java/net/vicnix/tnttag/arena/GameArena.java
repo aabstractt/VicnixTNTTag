@@ -7,7 +7,6 @@ import net.vicnix.tnttag.session.Session;
 import net.vicnix.tnttag.session.SessionStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.craftbukkit.v1_8_R3.scheduler.CraftTask;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -225,6 +224,16 @@ public class GameArena {
         SessionStorage sessionStorage = this.sessions.remove(player.getUniqueId()).getSessionStorage();
 
         Bukkit.getScheduler().runTaskAsynchronously(TNTTag.getInstance(), () -> MongoDBProvider.getInstance().saveSessionStorage(sessionStorage));
+    }
+
+    public void addSpectator(Session session) {
+        if (this.inArenaAsSpectator(session.getSessionStorage().getInstance())) return;
+
+        this.spectators.put(session.getSessionStorage().getUniqueId(), session);
+    }
+
+    public Map<UUID, Session> getSpectators() {
+        return this.spectators;
     }
 
     public Session getSessionPlayer(Player player) {

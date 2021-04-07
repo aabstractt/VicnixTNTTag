@@ -1,1 +1,4 @@
-gameId: "ttag-01"
+minPlayers: 8
+maxPlayers: 24
+
+mongouri: ""

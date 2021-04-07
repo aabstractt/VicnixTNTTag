@@ -3,11 +3,9 @@ package net.vicnix.tnttag.command;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.*;
 import net.vicnix.tnttag.command.subcommand.ArenaNameSubCommand;
-import net.vicnix.tnttag.command.subcommand.LoadSubCommand;
+import net.vicnix.tnttag.command.subcommand.CreateSubCommand;
 import net.vicnix.tnttag.command.subcommand.LobbySpawnSubCommand;
 import net.vicnix.tnttag.command.subcommand.WorldSpawnSubCommand;
-import net.vicnix.tnttag.session.Session;
-import net.vicnix.tnttag.session.SessionManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -22,10 +20,11 @@ public class TNTTagCommand implements CommandExecutor {
     private final Map<String, SubCommand> commands = new HashMap<>();
 
     public TNTTagCommand() {
+        this.registerSubCommand(new CreateSubCommand());
+
         this.registerSubCommand(new LobbySpawnSubCommand());
         this.registerSubCommand(new WorldSpawnSubCommand());
         this.registerSubCommand(new ArenaNameSubCommand());
-        this.registerSubCommand(new LoadSubCommand());
     }
 
     @Override
@@ -76,15 +75,7 @@ public class TNTTagCommand implements CommandExecutor {
             return false;
         }
 
-        Session session = SessionManager.getInstance().getSessionPlayer(player);
-
-        if (session == null) {
-            player.spigot().sendMessage(new ComponentBuilder("An error occurred!").color(ChatColor.RED).create());
-
-            return false;
-        }
-
-        subCommand.execute(session, newArgs);
+        subCommand.execute(player, newArgs);
 
         return false;
     }

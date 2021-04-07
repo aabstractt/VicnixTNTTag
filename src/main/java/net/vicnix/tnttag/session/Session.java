@@ -1,5 +1,6 @@
 package net.vicnix.tnttag.session;
 
+import net.vicnix.tnttag.arena.GameArena;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -9,16 +10,23 @@ import java.util.List;
 public class Session {
 
     private final SessionStorage sessionStorage;
+    private final GameArena arena;
 
     private Boolean spectator = false;
     private Boolean tnt = false;
 
-    public Session(SessionStorage sessionStorage) {
+    public Session(SessionStorage sessionStorage, GameArena arena) {
         this.sessionStorage = sessionStorage;
+
+        this.arena = arena;
     }
 
     public SessionStorage getSessionStorage() {
         return this.sessionStorage;
+    }
+
+    public GameArena getArena() {
+        return this.arena;
     }
 
     public Boolean isSpectator() {
@@ -27,10 +35,6 @@ public class Session {
 
     public Boolean isTnt() {
         return this.tnt;
-    }
-
-    public Boolean isAlive() {
-        return !this.isTnt() && !this.isSpectator();
     }
 
     public void sendMessage(String message) {
@@ -51,6 +55,8 @@ public class Session {
     public void convertToSpectator() {
         Player instance = this.getSessionStorage().getInstance();
 
+        instance.setWalkSpeed(.1f);
+
         instance.getInventory().clear();
 
         instance.setPlayerListName(ChatColor.GREEN + instance.getName());
@@ -61,7 +67,7 @@ public class Session {
 
         this.hideFromAll();
 
-        this.spawnTo((List<Session>) SessionManager.getInstance().getSessions().values().stream().filter(Session::isSpectator));
+        this.spawnTo((List<Session>) this.arena.getSessions().values().stream().filter(Session::isSpectator));
 
         this.spectator = true;
 
@@ -75,7 +81,7 @@ public class Session {
 
         instance.getInventory().clear();
         instance.getInventory().setHelmet(new ItemStack(Material.TNT));
-        instance.getInventory().setItem(0, new ItemStack(Material.TNT, 576));
+        instance.getInventory().setItem(0, new ItemStack(Material.TNT, Material.TNT.getMaxStackSize()));
 
         instance.updateInventory();
 

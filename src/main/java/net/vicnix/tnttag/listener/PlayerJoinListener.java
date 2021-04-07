@@ -1,6 +1,8 @@
 package net.vicnix.tnttag.listener;
 
-import net.vicnix.tnttag.session.SessionManager;
+import net.vicnix.tnttag.ArenaFactory;
+import net.vicnix.tnttag.TNTTag;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -12,6 +14,6 @@ public class PlayerJoinListener implements Listener {
     public void onPlayerJoinEvent(PlayerJoinEvent ev) {
         ev.setJoinMessage(null);
 
-        SessionManager.getInstance().createSession(ev.getPlayer());
+        Bukkit.getScheduler().runTaskAsynchronously(TNTTag.getInstance(), () -> ArenaFactory.getInstance().joinArena(ev.getPlayer()));
     }
 }

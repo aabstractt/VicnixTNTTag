@@ -1,6 +1,6 @@
 package net.vicnix.tnttag.listener;
 
-import net.vicnix.tnttag.arena.GameArena;
+import net.vicnix.tnttag.ArenaFactory;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -10,28 +10,28 @@ public class BlockListener implements Listener {
 
     @EventHandler (priority = EventPriority.NORMAL)
     public void onBlockBreakEvent(BlockBreakEvent ev) {
-        if (!GameArena.getInstance().wasLoaded()) return;
+        if (ArenaFactory.getInstance().getArena(ev.getBlock().getWorld()) == null) return;
 
         ev.setCancelled(true);
     }
 
     @EventHandler (priority = EventPriority.NORMAL)
     public void onBlockPlaceEvent(BlockPlaceEvent ev) {
-        if (!GameArena.getInstance().wasLoaded()) return;
+        if (ArenaFactory.getInstance().getArena(ev.getBlock().getWorld()) == null) return;
 
         ev.setCancelled(true);
     }
 
     @EventHandler (priority = EventPriority.NORMAL)
     public void onBlockUpdateEvent(BlockBurnEvent ev) {
-        if (!GameArena.getInstance().wasLoaded()) return;
+        if (ArenaFactory.getInstance().getArena(ev.getBlock().getWorld()) == null) return;
 
         ev.setCancelled(true);
     }
 
     @EventHandler (priority = EventPriority.NORMAL)
     public void onBlockExplodeEvent(BlockExplodeEvent ev) {
-        if (!GameArena.getInstance().wasLoaded()) return;
+        if (ArenaFactory.getInstance().getArena(ev.getBlock().getWorld()) == null) return;
 
         ev.setYield(0);
 
@@ -42,35 +42,35 @@ public class BlockListener implements Listener {
 
     @EventHandler (priority = EventPriority.NORMAL)
     public void oBlockSpreadEvent(BlockSpreadEvent ev) {
-        if (!GameArena.getInstance().wasLoaded()) return;
+        if (ArenaFactory.getInstance().getArena(ev.getBlock().getWorld()) == null) return;
 
         ev.setCancelled(true);
     }
 
     @EventHandler (priority = EventPriority.NORMAL)
     public void onBlockFadeEvent(BlockFadeEvent ev) {
-        if (!GameArena.getInstance().wasLoaded()) return;
+        if (ArenaFactory.getInstance().getArena(ev.getBlock().getWorld()) == null) return;
 
         ev.setCancelled(true);
     }
 
     @EventHandler (priority = EventPriority.NORMAL)
     public void onBlockFormEvent(BlockFromToEvent ev) {
-        if (!GameArena.getInstance().wasLoaded()) return;
+        if (ArenaFactory.getInstance().getArena(ev.getBlock().getWorld()) == null) return;
 
         ev.setCancelled(true);
     }
 
     @EventHandler (priority = EventPriority.NORMAL)
     public void onBlockFromToEvent(BlockFromToEvent ev) {
-        if (!GameArena.getInstance().wasLoaded()) return;
+        if (ArenaFactory.getInstance().getArena(ev.getBlock().getWorld()) == null) return;
 
         ev.setCancelled(true);
     }
 
     @EventHandler (priority = EventPriority.NORMAL)
     public void onLeavesDecayEvent(LeavesDecayEvent ev) {
-        if (!GameArena.getInstance().wasLoaded()) return;
+        if (ArenaFactory.getInstance().getArena(ev.getBlock().getWorld()) == null) return;
 
         ev.setCancelled(true);
     }

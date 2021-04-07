@@ -5,6 +5,7 @@ import net.vicnix.tnttag.command.SubCommand;
 import net.vicnix.tnttag.command.SubCommandAnnotation;
 import net.vicnix.tnttag.session.Session;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
 @SubCommandAnnotation(
         name = "arenaname",
@@ -16,10 +17,10 @@ import org.bukkit.ChatColor;
 public class ArenaNameSubCommand extends SubCommand {
 
     @Override
-    public void execute(Session session, String[] args) {
+    public void execute(Player player, String[] args) {
         TNTTag.getInstance().getConfig().set("arenaName", args[0]);
         TNTTag.getInstance().saveConfig();
 
-        session.sendMessage(ChatColor.LIGHT_PURPLE + "Ahora el nombre de la arena es " + args[0]);
+        player.sendMessage(ChatColor.LIGHT_PURPLE + "Ahora el nombre de la arena es " + args[0]);
     }
 }

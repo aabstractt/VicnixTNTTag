@@ -1,6 +1,6 @@
 package net.vicnix.tnttag.listener;
 
-import net.vicnix.tnttag.session.SessionManager;
+import net.vicnix.tnttag.ArenaFactory;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -12,6 +12,6 @@ public class PlayerQuitListener implements Listener {
     public void onPlayerQuitEvent(PlayerQuitEvent ev) {
         ev.setQuitMessage(null);
 
-        SessionManager.getInstance().closeSession(ev.getPlayer());
+        ArenaFactory.getInstance().removePlayer(ev.getPlayer());
     }
 }

@@ -1,10 +1,10 @@
 package net.vicnix.tnttag.command;
 
-import net.vicnix.tnttag.session.Session;
+import org.bukkit.entity.Player;
 
 public abstract class SubCommand {
 
-    public abstract void execute(Session session, String[] args);
+    public abstract void execute(Player player, String[] args);
 
     /**
      * Gets the Annotation of a PartyAnnotationCommand class.

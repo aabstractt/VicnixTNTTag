@@ -1,6 +1,5 @@
 package net.vicnix.tnttag;
 
-import net.vicnix.tnttag.arena.GameArena;
 import net.vicnix.tnttag.command.TNTTagCommand;
 import net.vicnix.tnttag.listener.*;
 import net.vicnix.tnttag.provider.MongoDBProvider;
@@ -21,8 +20,8 @@ public class TNTTag extends JavaPlugin {
         this.getConfig().options().copyDefaults(true);
         this.saveConfig();
 
+        LevelFactory.getInstance().init();
         MongoDBProvider.getInstance().init();
-        GameArena.getInstance().init();
 
         this.getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
         this.getServer().getPluginManager().registerEvents(new PlayerQuitListener(), this);
@@ -39,5 +38,9 @@ public class TNTTag extends JavaPlugin {
 
     public Integer getMinPlayers() {
         return 1;
+    }
+
+    public Integer getMaxPlayers() {
+        return 24;
     }
 }

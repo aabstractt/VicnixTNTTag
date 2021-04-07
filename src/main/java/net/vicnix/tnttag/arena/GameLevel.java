@@ -1,5 +1,6 @@
 package net.vicnix.tnttag.arena;
 
+import net.vicnix.tnttag.LevelFactory;
 import org.bukkit.Location;
 
 public class GameLevel {
@@ -35,5 +36,9 @@ public class GameLevel {
 
     public void setWorldSpawn(Location worldSpawn) {
         this.worldSpawn = worldSpawn;
+    }
+
+    public void handleUpdate() {
+        LevelFactory.getInstance().saveLevels();
     }
 }

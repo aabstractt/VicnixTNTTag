@@ -1,9 +1,8 @@
 package net.vicnix.tnttag.listener;
 
-import net.vicnix.tnttag.arena.GameArena;
+import net.vicnix.tnttag.ArenaFactory;
 import net.vicnix.tnttag.arena.GameStatus;
 import net.vicnix.tnttag.session.Session;
-import net.vicnix.tnttag.session.SessionManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,26 +10,40 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 public class EntityDamageListener implements Listener {
 
     @EventHandler (priority = EventPriority.NORMAL)
-    public void onEntityDamageByEntityEvent(EntityDamageByEntityEvent ev) {
-        ev.setDamage(0);
+    public void onEntityDamageEvent(EntityDamageEvent ev) {
+        if (!(ev.getEntity() instanceof Player)) return;
 
-        if (!(ev.getEntity() instanceof Player) || !(ev.getDamager() instanceof Player)) return;
+        Session session = ArenaFactory.getInstance().getSessionPlayer((Player) ev.getEntity());
 
-        if (GameArena.getInstance().getStatus() != GameStatus.IN_GAME) {
+        if (session == null) return;
+
+        if (session.getArena().getStatus() != GameStatus.IN_GAME) {
             ev.setCancelled(true);
 
             return;
         }
 
-        Session session = SessionManager.getInstance().getSessionPlayer((Player) ev.getEntity());
+        if (ev.getCause() != DamageCause.ENTITY_ATTACK && ev.getCause() != DamageCause.FIRE && ev.getCause() != DamageCause.FIRE_TICK) {
+            ev.setCancelled(true);
 
-        if (session == null) return;
+            return;
+        }
 
-        Session target = SessionManager.getInstance().getSessionPlayer((Player) ev.getDamager());
+        ev.setDamage(0);
+
+        if (!(ev instanceof EntityDamageByEntityEvent)) return;
+
+
+        ev.setDamage(0);
+
+        if (!(((EntityDamageByEntityEvent) ev).getDamager() instanceof Player)) return;
+
+        Session target = ArenaFactory.getInstance().getSessionPlayer((Player) ((EntityDamageByEntityEvent) ev).getDamager());
 
         if (target == null) return;
 
@@ -42,12 +55,5 @@ public class EntityDamageListener implements Listener {
 
         target.sendMessage(ChatColor.YELLOW + "Le has pasado la tnt a " + session.getSessionStorage().getName());
         session.sendMessage(ChatColor.RED + "Has sido golpeado por " + target.getSessionStorage().getName());
-    }
-
-    @EventHandler (priority = EventPriority.NORMAL)
-    public void onEntityDamageEvent(EntityDamageEvent ev) {
-        if (!(ev instanceof EntityDamageByEntityEvent)) {
-            ev.setCancelled(true);
-        }
     }
 }
